@@ -53,7 +53,8 @@ ui <- fluidPage(
                            "Civil Twilight",
                            "Nautical Twilight",
                            "Astronomical Twilight",
-                           "Night"
+                           "Night",
+                           "Solar Noon"
                          ),
       ),
       selectInput("display",
