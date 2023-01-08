@@ -10,7 +10,11 @@ options(warn=-1)
 
 sites <- sites()
 year <- as.POSIXlt(Sys.Date())$year + 1900
-trait_data <- audioblast("data", "traits", check=F, trait="Time of Day of Call")
+trait_data <- audioblast(
+  "data",
+  "traits",
+  check = FALSE,
+  trait = "Time of Day of Call")
 
 
 ui <- fluidPage(
@@ -24,7 +28,7 @@ ui <- fluidPage(
                   value=Sys.Date(),
                   timeFormat="%Y-%m-%d",
                   step = 3,
-                  animate = animationOptions(interval = 250,loop=TRUE)
+                  animate = animationOptions(interval = 250, loop = TRUE)
       ),
       selectInput("loc",
                   "Location:",
@@ -72,12 +76,14 @@ ui <- fluidPage(
     mainPanel(
       tags$h4("Time of potential acoustic activity by species"),
       HTML("<p>This example pulls some acoustic activity trait data from
-           <a href='http://audioblast.org'>audioBlast</a> that (in part) uses relative definitions
-           for specifying times of day (e.g. dawn, sunset, night). For a specified day and location these times
-           are converted to times and plotted. (These species do not actually occur in the locations specified,
-           or at all times of year.)</p>
+           <a href='http://audioblast.org'>audioBlast</a> that (in part) 
+           uses relative definitions for specifying times of day (e.g. dawn, 
+           sunset, night). For a specified day and location these times
+           are converted to times and plotted. (These species do not actually 
+           occur in the locations specified, or at all times of year.)</p>
 
-           <p>It is recomended to press the play button under the day slider to see the viualisation.</p>"),
+           <p>It is recomended to press the play button under the day slider to 
+           see the viualisation.</p>"),
 
 
       plotOutput("distPlot"),
@@ -97,11 +103,11 @@ server <- function(input, output) {
   citation <- list(
     cite_bibentry(
       bibentry(
-        bibtype="Misc",
-        title="audioBlast trait examples for Urban Nature Project sites",
-        author="Ed Baker",
-        url="http://shiny.ebaker.me.uk/audioblast-diel-traits/",
-        year=2022
+        bibtype = "Misc",
+        title = "audioBlast trait examples for Urban Nature Project sites",
+        author = "Ed Baker",
+        url = "http://shiny.ebaker.me.uk/audioblast-diel-traits/",
+        year = 2022
       )
     )
   )
@@ -135,33 +141,33 @@ server <- function(input, output) {
   output$citmisc <- citationTabUI(citmisc)
 
   output$distPlot <- renderPlot({
-    lat <- as.numeric(sites[sites$names==input$loc,]$lat)
-    lon <- as.numeric(sites[sites$names==input$loc,]$lon)
+    lat <- as.numeric(sites[sites$names == input$loc, ]$lat)
+    lon <- as.numeric(sites[sites$names == input$loc, ]$lon)
 
     if (input$display == "Main") {
-      inner = 0
-      outer = 2
-      d.inner= 0.5
-      d.outer = 2
+      inner <- 0
+      outer <- 2
+      d.inner <- 0.5
+      d.outer <- 2
     }
     if (input$display == "Core") {
-      inner = 0
-      outer = 1
-      d.inner =1
-      d.outer = 2
+      inner <- 0
+      outer <- 1
+      d.inner <- 1
+      d.outer <- 2
     }
     if (input$display == "Ring") {
-      inner = 1.75
-      outer = 2
-      d.inner = 0.5
-      d.outer = 1.75
+      inner <- 1.75
+      outer <- 2
+      d.inner <- 0.5
+      d.outer <- 1.75
     }
-    t<- ab_diel_traits(
+    t <- ab_diel_traits(
       trait_data,
       input$date,
       53,
       0)
-    t <- t[!is.na(t$value_min) & !is.na(t$value_max),]
+    t <- t[!is.na(t$value_min) & !is.na(t$value_max), ]
 
     #Process some reuslts
     matches <- 1
@@ -169,8 +175,8 @@ server <- function(input, output) {
     matched_rows <- rep(NA, 5)
     matched_values <- rep(NA, 5)
     while (matches < 11 & i < nrow(t)) {
-      if (!t[i,"value_min"] %in% matched_values) {
-        matched_values[matches] <- t[i,"value_min"]
+      if (!t[i, "value_min"] %in% matched_values) {
+        matched_values[matches] <- t[i, "value_min"]
         matched_rows[matches] <- i
         matches <- matches + 1
       }
@@ -183,7 +189,12 @@ server <- function(input, output) {
 
     cols<-brewer.pal(nrow(t),"Dark2")
 
-    dielRings(t$taxon, t$value_min, t$value_max, cols=cols, limits=c(d.inner, d.outer))
+    dielRings(
+      t$taxon,
+      t$value_min,
+      t$value_max,
+      cols = cols,
+      limits = c(d.inner, d.outer))
   })
 }
 
